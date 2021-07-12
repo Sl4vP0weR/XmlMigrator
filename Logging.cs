@@ -12,7 +12,7 @@ namespace XmlMigrator
     {
         void Log(object obj);
     }
-    class ConsoleLogger : ILogger
+    public class ConsoleLogger : ILogger
     {
         public void Log(object obj) => Console.WriteLine(obj);
     }
@@ -24,9 +24,7 @@ namespace XmlMigrator
             Parent = parent ?? this;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static string SpacePrepend(int prepend) => new string(' ', prepend);
-        /// <param name="prepend">whitespace before text</param>
+        /// <param name="prepend">whitespace before text length</param>
         public void FormatLog(XmlNode node, int prepend = 0)
         {
             var isText = node.NodeType == XmlNodeType.Text && (node.ParentNode?.NodeType.EqualsAny(XmlNodeType.Element, XmlNodeType.Attribute) ?? false);
@@ -36,9 +34,9 @@ namespace XmlMigrator
             var value = isText ? $"{node.InnerText}" : ""; // value of text node
             value = isText ? double.TryParse(value.Replace('.', ','), out var _) ? value : $"\"{value}\"" : ""; // format if text is numeric
             var arrow = (hasChilds ? "˯" : "");
-            Parent.Log($"{SpacePrepend(prepend)}{arrow}{type}{name}{value}");
+            Parent.Log($"{Extensions.Whitespace(prepend)}{arrow}{type}{name}{value}");
         }
-        /// <param name="prepend">whitespace before text</param>
+        /// <param name="prepend">whitespace before text length</param>
         public void LogRecursively(XmlNode node, int prepend = 0, bool debug = false)
         {
             FormatLog(node, prepend);

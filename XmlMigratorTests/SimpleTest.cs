@@ -40,9 +40,20 @@ namespace XmlMigratorTests
         [Fact]
         public void SimpleMigration()
         {
-            var Old = new OldXmlClass { a = 1, b = "text1", c = new OldXmlClass { a = 2, b = "text2", d = new List<string> { "abc2" } }, d = new List<string> { "abc1" } };
+            var Old = new OldXmlClass
+            {
+                a = 1,
+                b = "text1",
+                d = new List<string> { "abc1" },
+                c = new OldXmlClass 
+                { 
+                    a = 2, 
+                    b = "text2",
+                    d = new List<string> { "abc2" }
+                }
+            };
             var Migrator = TryMigrate<NewXmlClass>(Old, "migrateSimple.txt");
-            var New = Migrator.Value;
+            var New = Migrator.GenericInstance;
             Assert.Equal(Old.a, New.a);
             Assert.Equal(Old.b, New.b);
             Assert.Equal(Old.d.Count, New.d?.Count ?? 0);
